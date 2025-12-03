@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: anant
+      POSTGRES_PASSWORD: 8721
+      POSTGRES_DB: origenomi_database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    # no ports exposed for secure server
+
+  tool:
+    shm_size: "2gb"
+    build: ./tool
+    depends_on:
+      - postgres
+    volumes:
+      - ./tmp/origenomi:/tmp/origenomi
+    command: >
+      uvicorn app.main:app 
+      --uds /tmp/origenomi/app.sock
+
+  worker:
+    build: ./worker
+    depends_on:
+      - tool
+      - postgres
+    volumes:
+      - ./input_files:/input_files
+      - ./tmp/origenomi:/tmp/origenomi
+    entrypoint: ["python", "worker.py"]
+    # run with:   docker compose run worker /input_files/somefile.fna
+
+volumes:
+  postgres_data:
