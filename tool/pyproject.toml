@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "origami"
+version = "0.1.0"
+description = "Trim circular overlaps, find dnaA/oriC, rotate sequences, and report."
+authors = [{ name = "You" }]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+origami = "origami.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["origami"]
+
+[tool.setuptools.package-data]
+origami = []
